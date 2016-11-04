@@ -84,7 +84,7 @@ CONFIG    - The PIC18F25K50 configuration fuses should be set as follows (items
                         0        = *MCLRE: RE3 input pin enabled; MCLR disabled
                          1       =  SDOMX: SDO is on RB3
                           0      =  Unimplemented
-                           1     =  T3CMX: T3CKI is on RC0
+                           1     =  T1CMX: T1CKI is on RC0
                             00   =  Unimplemented
                               0  =  PDADEN: ANSELB<5:0> resets to 0, PORTB<4:0> pins are configured as digital I/O on Reset
                                0 =  CCP2MX: CCP2 input/output is multiplexed with RB3
@@ -163,16 +163,16 @@ void disableUSB()
 void Prolog()
 {
   ANSELA = 0b00000000;    // Configure all PORTA bits as digital
-  ANSELB = 0b00000000;    // Configure all PORTB bits as digital
+//  ANSELB = 0b00000000;    // Configure all PORTB bits as digital
   ANSELC = 0b00000000;    // Configure all PORTC bits as digital
 
   LATA = 0;
-  LATB = 0;
+//  LATB = 0;
   LATC = 0;
 
   //        76543210
   TRISA = 0b00000000;     // 1=Input, 0=Output
-  TRISB = 0b01111000;
+//  TRISB = 0b01111000;
   TRISC = 0b00110000;
 
   OSCCON = 0b01110000;
@@ -192,9 +192,9 @@ void Prolog()
 //       the High Frequency Internal Oscillator (HFINTOSC).
 // This project uses the HFINTOSC set to run at 16 MHz and the only valid
 // PLL multiplier for USB is x3.
-  PLLEN_bit = 0;          // OSCCON2.PLLEN = 0:    Disable the PLL, then...
+  SPLLEN_bit = 0;         // OSCCON2.SPLLEN = 0:    Disable the PLL, then...
   SPLLMULT_bit = 1;       // OSCTUNE.SPLLMULT = 1: Set the PLL multiplier to x3
-  PLLEN_bit = 1;          // OSCCON2.PLLEN = 1:    Now re-enable the PLL
+  SPLLEN_bit = 1;         // OSCCON2.SPLLEN = 1:    Now re-enable the PLL
   while(!PLLRDY_bit);     // Wait for PLL to lock
 
   ACTEN_bit = 0;          // Disable Active Clock Tuning, then...
@@ -210,13 +210,13 @@ void Prolog()
                           // 0 = USB Full Speed disabled (requires 6 MHz USB clock)
 
 // Timer3 is used for human-scale delays (Timer3 is not always enabled)
-  T3CON   = 0b00110010;
-//            xx             00 = TMR3CS: Timer3 clock source is instruction clock (Fosc/4)
-//              xx           11 = TMR3PS: Timer3 prescale value is 1:8
+  T1CON   = 0b00110010;
+//            xx             00 = TMR1CS: Timer3 clock source is instruction clock (Fosc/4)
+//              xx           11 = TMR1PS: Timer3 prescale value is 1:8
 //                x          0  = SOSCEN: Secondary Oscillator disabled
-//                 x         0  = T3SYNC: Ignored because TMR3CS = 0x
+//                 x         0  = T1SYNC: Ignored because TMR1CS = 0x
 //                  x        1  = RD16:   Enables register read/write of Timer3 in one 16-bit operation
-//                   x       0  = TMR3ON: Timer3 is off
+//                   x       0  = TMR1ON: Timer3 is off
 // Timer3 tick rate = 48 MHz FOSC/4/8 = 1.5 MHz (667 ns)
 // Timer3 interrupt rate = 1.5 MHz / 65536 = 22.9 times per second
 
@@ -226,7 +226,7 @@ void Prolog()
 // Let the interrupts begin
 //----------------------------------------------------------------------------
 
-  TMR3IE_bit = 1;         // Enable Timer3 interrupts (for keepalive)
+  TMR1IE_bit = 1;         // Enable Timer3 interrupts (for keepalive)
   IOCIE_bit = 1;          // Enable PORTB/C Interrupt On Change interrupts
   PEIE_bit = 1;           // Enable peripheral interrupts
   GIE_bit = 1;            // Enable global interrupts
@@ -241,7 +241,7 @@ void main()
 {
   Prolog();
   nRemainingTimerTicks = INTERVAL_IN_SECONDS(10);
-  TMR3ON_bit = 1;   // Enable keepalive interrupts
+  TMR1ON_bit = 1;   // Enable keepalive interrupts
   while (1)
   {
     if (bUSBReady)
@@ -277,9 +277,9 @@ void main()
 void interrupt()               // High priority interrupt service routine
 {
   USB_Interrupt_Proc();        // Always give the USB module first opportunity to process
-  if (TMR3IF_bit)              // Timer3 interrupt? (22.9 times/second)
+  if (TMR1IF_bit)              // Timer3 interrupt? (22.9 times/second)
   {
     nRemainingTimerTicks--;    // Decrement delay count
-    TMR3IF_bit = 0;            // Clear the Timer3 interrupt flag
+    TMR1IF_bit = 0;            // Clear the Timer3 interrupt flag
   }
 }

@@ -43,7 +43,7 @@ typedef union
 
 t_ledIndicators leds;
 
-#define CAPSLOCK_LED         LATA0_bit
+#define CAPSLOCK_LED         RA0_bit
 
 volatile uint8_t nRemainingTimerTicks;
 volatile uint8_t             cFlags;
