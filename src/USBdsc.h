@@ -1,0 +1,1 @@
+#define REPORT_ID_KEYBOARD          'K'
