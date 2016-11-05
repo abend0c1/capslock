@@ -6,7 +6,7 @@ Value=0
 [BUILD_TYPE]
 Value=0
 [ACTIVE_TAB]
-Value=capslock.c
+Value=capslock.h
 [USE_EEPROM]
 Value=0
 [USE_HEAP]
@@ -25,11 +25,9 @@ Count=0
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=4
+Count=2
 File0=capslock.h
-File1=USBdsc.c
-File2=capslock.c
-File3=..\..\pub\src\pub.c
+File1=capslock.c
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
@@ -39,7 +37,7 @@ Count=0
 [SEARCH_PATH]
 Count=3
 Path0=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Defs\
-Path1=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16\
+Path1=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16_Enh\
 Path2=E:\projects\capslock\src\
 [HEADER_PATH]
 Count=1

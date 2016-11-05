@@ -44,17 +44,12 @@ typedef union
 t_ledIndicators leds;
 
 #define CAPSLOCK_LED         RA0_bit
+#define SCROLL_LOCK_KEY      0x47
 
 volatile uint8_t nRemainingTimerTicks;
 volatile uint8_t             cFlags;
 #define bUSBReady            cFlags.B0
 
 // USB buffers must be in USB RAM, hence the "absolute" specifier...
-uint8_t BANK4_RESERVED_FOR_USB[256] absolute 0x400; // Prevent compiler from allocating
-                                                    // RAM variables in Bank 4 because
-                                                    // the USB hardware uses that bank.
-                                                    // Refer to the PIC18F25K50 datasheet
-                                                    // section "6.4.1 USB RAM" for more
-                                                    // information.
-uint8_t usbFromHost[1+1] absolute 0x500;  // Buffer for PIC <-- Host (ReportId + 1 byte)
-uint8_t usbToHost[1+3]   absolute 0x508;  // Buffer for PIC --> Host (ReportId + 3 bytes)
+uint8_t usbFromHost[1+1] absolute 0x020;  // Buffer for PIC <-- Host (ReportId + 1 byte)
+uint8_t usbToHost[1+3]   absolute 0x028;  // Buffer for PIC --> Host (ReportId + 3 bytes)
