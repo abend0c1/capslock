@@ -34,15 +34,15 @@ FUNCTION - This is a USB caps-lock-light-on-a-stick that shines when the
 FEATURES - 1. Absolutely NO HOST DRIVERS required.
 
 PIN USAGE -                     PIC18F25K50
-                           .------------------.
-            MCLR       --> | RE3  1    28 RB7 | <-- PGD
-            LED        <-- | RA0  2    27 RB6 | <-- PGC
-                       <-- | RA1  3    26 RB5 | <--
-                       <-- | RA2  4    25 RB4 | <--
-                       <-- | RA3  5    24 RB3 | <--
-                       <-- | RA4  6    23 RB2 | <--
-                       <-- | RA5  7    22 RB1 | <--
-            Ground     --- | VSS  8    21 RB0 | <--
+                           .------------------.                 .-- IOC
+            MCLR       --> | RE3  1    28 RB7 | <-- PGD         | |
+            LED        <-- | RA0  2    27 RB6 | <-- PGC         | | PORTB
+                       <-- | RA1  3    26 RB5 | <-- BUTTON      | | Weak
+                       <-- | RA2  4    25 RB4 | <--             | | Pullups
+                       <-- | RA3  5    24 RB3 | <--               | Enabled
+                       <-- | RA4  6    23 RB2 | <--               |
+                       <-- | RA5  7    22 RB1 | <--               |
+            Ground     --- | VSS  8    21 RB0 | <--               |
             n/c        --- | RA7  9    20 VDD | --- +5V
                        <-- | RA6  10   19 VSS | --- Ground
                        <-- | RC0  11   18 RC7 | --> RX

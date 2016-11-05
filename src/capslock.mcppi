@@ -25,10 +25,11 @@ Count=0
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=3
+Count=4
 File0=capslock.h
 File1=USBdsc.c
 File2=capslock.c
+File3=..\..\pub\src\pub.c
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
