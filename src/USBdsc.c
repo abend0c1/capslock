@@ -46,7 +46,7 @@ const char EP_OUT_INTERVAL = 5;              // n x 1 millisecond units (for USB
 
 const char USB_INTERRUPT = 1;
 const char USB_HID_EP = 1;
-const char USB_HID_RPT_SIZE = 50   // Keyboard       --> host
+const char USB_HID_RPT_SIZE = 38   // Keyboard       --> host
                             + 21   // Keyboard       <-- host
                             ;
 /* Device Descriptor */
@@ -181,14 +181,8 @@ Keyboard Input Report (PIC --> Host) 4 bytes as follows:
   0xA1, 0x01,                  // (MAIN)   COLLECTION         0x01 Application (Usage=0x00010006: Page=Generic Desktop Page, Usage=Keyboard, Type=CA)
   0x85, REPORT_ID_KEYBOARD,    //   (GLOBAL) REPORT_ID          0x4B (75) 'K'
   0x05, 0x07,                  //   (GLOBAL) USAGE_PAGE         0x0007 Keyboard/Keypad Page
-  0x09, 0xE1,                  //   (LOCAL) USAGE               0x000700E1 Keyboard Left Shift
-  0x09, 0xE0,                  //   (LOCAL) USAGE               0x000700E0 Keyboard Left Control
-  0x09, 0xE2,                  //   (LOCAL) USAGE               0x000700E0 Keyboard Left Alt
-  0x09, 0xE3,                  //   (LOCAL) USAGE               0x000700E0 Keyboard Left GUI
-  0x09, 0xE5,                  //   (LOCAL) USAGE               0x000700E1 Keyboard Right Shift
-  0x09, 0xE4,                  //   (LOCAL) USAGE               0x000700E0 Keyboard Right Control
-  0x09, 0xE6,                  //   (LOCAL) USAGE               0x000700E0 Keyboard Right Alt
-  0x09, 0xE7,                  //   (LOCAL) USAGE               0x000700E0 Keyboard Right GUI
+  0x19, 0xE0,                  //   (LOCAL)  USAGE_MINIMUM      0x000700E0 Keyboard Left Control (DV=Dynamic Value)
+  0x29, 0xE7,                  //   (LOCAL)  USAGE_MAXIMUM      0x000700E7 Keyboard Right GUI (DV=Dynamic Value)
   0x25, 0x01,                  //   (GLOBAL) LOGICAL_MAXIMUM    0x01 (1)
   0x75, 0x01,                  //   (GLOBAL) REPORT_SIZE        0x01 (1) Number of bits per field
   0x95, 0x08,                  //   (GLOBAL) REPORT_COUNT       0x08 (8) Number of fields
@@ -262,7 +256,7 @@ const struct tagProduct
   unsigned int string[30]; // Max number of (2-byte) "characters"
 } sProduct =
   {
-    32,           //sizeof this descriptor string (including length and type fields)
+    34,           //sizeof this descriptor string (including length and type fields)
     0x03,
     {'S','K','-','8','8','1','5',' ','K','e','y','b','o','a','r','d'}
   };

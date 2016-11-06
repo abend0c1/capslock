@@ -45,8 +45,8 @@ FEATURES - 1. Absolutely NO HOST DRIVERS required.
 PIN USAGE -                     PIC16F1455
                            .------------------.
             Vdd +5V    --- | RE3  1    14 RB7 | --- Vss GND ------.
-            LED        --- | RA5  2    13 RA0 | --- USB D+        |
-            BUTTON     --- | RA4  3    12 RA1 | --- USB D-        |
+            BUTTON     --- | RA5  2    13 RA0 | --- USB D+        |
+            LED        --- | RA4  3    12 RA1 | --- USB D-        |
            ~MCLR       --- | RA3  4    11 RB4 | --- Vusb -----||--' 2 x 100 nF
                        --- | RC5  5    10 RC0 | ---
                        --- | RC4  6     9 RC1 | --- PGD
@@ -162,19 +162,10 @@ void Prolog()
   LATC = 0;
 
   //        76543210
-  TRISA = 0b00010000;     // 1=Input, 0=Output
+  TRISA = 0b00100000;     // 1=Input, 0=Output
   TRISC = 0b00000000;
 
-  NOT_RBPU_bit = 0;       // Enable PORTB weak pull-ups
-
-  OSCCON = 0b01111100;
-//           x              = SPPLEN:   0=PLL is disabled
-//            x             = SPLLMULT: 1=3x PLL is enabled
-//             xxxx         = IRCF:     1111=16 MHz or 48 MHz
-//                 xx       = SCS:      00=Clock determined by FOSC in Configuration Words
-
-  while (!HFIOFS_bit);    // Wait for HFINTOSC to stabilise
-  while (!OSTS_bit);      // Wait until FOSC<2:0> is being used
+  WPUA5_bit = 0;          // Enable weak pull-up on the button input
 
 // You can enable the PLL and set the PLL multipler two ways:
 // 1. At compile time - setting configuration fuses: CONFIG2.PLLEN and CONFIG2.PLLMULT
@@ -184,9 +175,14 @@ void Prolog()
 //       the High Frequency Internal Oscillator (HFINTOSC).
 // This project uses the HFINTOSC set to run at 16 MHz and the only valid
 // PLL multiplier for USB is x3.
-  SPLLEN_bit = 0;         // OSCCON.SPLLEN = 0:   Disable the PLL, then...
-  SPLLMULT_bit = 1;       // OSCCON.SPLLMULT = 1: Set the PLL multiplier to x3
-  SPLLEN_bit = 1;         // OSCCON.SPLLEN = 1:   Now re-enable the PLL
+  OSCCON = 0b11111100;
+//           x              = SPPLEN:   1=PLL is enabled
+//            x             = SPLLMULT: 1=3x PLL is enabled
+//             xxxx         = IRCF:     1111=16 MHz or 48 MHz
+//                 xx       = SCS:      00=Clock determined by FOSC in Configuration Words
+
+  while (!HFIOFS_bit);    // Wait for HFINTOSC to stabilise
+
   while(!PLLRDY_bit);     // Wait for PLL to lock
 
   ACTEN_bit = 0;          // Disable Active Clock Tuning, then...

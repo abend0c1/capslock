@@ -42,10 +42,10 @@ typedef union
 
 t_ledIndicators leds;
 
-sbit BUTTON              at RB5_bit;
+sbit BUTTON              at RA5_bit;
 #define BUTTON_PRESSED   !BUTTON
 
-#define CAPSLOCK_LED         RA0_bit
+#define CAPSLOCK_LED         RA4_bit
 
 #define SCROLL_LOCK_KEY      0x47
 
@@ -55,5 +55,6 @@ volatile uint8_t             cFlags;
 #define bKeepAlive           cFlags.B1
 
 // USB buffers must be in USB RAM, hence the "absolute" specifier...
-uint8_t usbFromHost[1+1] absolute 0x020;  // Buffer for PIC <-- Host (ReportId + 1 byte)
-uint8_t usbToHost[1+3]   absolute 0x028;  // Buffer for PIC --> Host (ReportId + 3 bytes)
+// uint8_t RESERVE_BANK0_FOR_USB[80] absolute 0x020;
+uint8_t usbFromHost[1+1];  // Buffer for PIC <-- Host (ReportId + 1 byte)
+uint8_t usbToHost[1+3];    // Buffer for PIC --> Host (ReportId + 3 bytes)
