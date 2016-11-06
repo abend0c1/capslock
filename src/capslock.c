@@ -27,11 +27,20 @@
 
 NAME     - CAP! CapsLock Light
 
-FUNCTION - This is a USB caps-lock-light-on-a-stick that shines when the 
+FUNCTION - This is a USB caps-lock-light-on-a-stick that lights up when the
            CapsLock LED would normally be lit. Some Lenovo laptops do not have
            a CapsLock LED.
+           
+           By default, the SCROLL LOCK keystroke is sent to the host every
+           60 seconds. This behaviour can be toggled by pressing the button
+           on the CapsLock dongle. The SCROLL LOCK light, present on many
+           keyboards, will flash to indicate the keystroke injection is
+           active.
+
 
 FEATURES - 1. Absolutely NO HOST DRIVERS required.
+           2. The user can press the button to toggle the sending of "keep
+              alive" keystrokes.
 
 PIN USAGE -                     PIC18F25K50
                            .------------------.                 .-- IOC
@@ -172,8 +181,10 @@ void Prolog()
 
   //        76543210
   TRISA = 0b00000000;     // 1=Input, 0=Output
-  TRISB = 0b01111000;
+  TRISB = 0b00100000;
   TRISC = 0b00110000;
+
+  NOT_RBPU_bit = 0;       // Enable PORTB weak pull-ups (PIC 18F25K50)
 
   OSCCON = 0b01110000;
 //           x              0  = IDLEN: Sleep on SLEEP instruction
@@ -203,6 +214,7 @@ void Prolog()
 //  while (!ACTLOCK_bit);   // Wait until HFINTOSC is successfully tuned
 
   cFlags = 0;             // Reset all flags
+  bKeepAlive = 1;         // Enable "keep alive" keystroke injection
 
   // Set up USB
   UPUEN_bit = 1;          // USB On-chip pull-up enable
@@ -227,7 +239,6 @@ void Prolog()
 //----------------------------------------------------------------------------
 
   TMR3IE_bit = 1;         // Enable Timer3 interrupts (for keepalive)
-  IOCIE_bit = 1;          // Enable PORTB/C Interrupt On Change interrupts
   PEIE_bit = 1;           // Enable peripheral interrupts
   GIE_bit = 1;            // Enable global interrupts
 
@@ -235,35 +246,54 @@ void Prolog()
 }
 
 
-
+#define KEEP_ALIVE_INTERVAL 60
 
 void main()
 {
   Prolog();
-  nRemainingTimerTicks = INTERVAL_IN_SECONDS(10);
+  nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
   TMR3ON_bit = 1;   // Enable keepalive interrupts
   while (1)
   {
+    if (BUTTON_PRESSED)
+    {
+      Delay_ms(25);                   // Cheap button debounce
+      if (BUTTON_PRESSED)             // If button still pressed after debounce delay
+      {
+        TMR3ON_bit = 0;               // Prevent keystroke injection while the button is pressed
+        CAPSLOCK_LED ^= 1;            // Flash LED to acknowledge button press
+        while (BUTTON_PRESSED);       // Wait until button is released
+        CAPSLOCK_LED ^= 1;            // Restore LED status
+        bKeepAlive ^= 1;              // Toggle injecting "keep alive" keystrokes
+        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
+        TMR3ON_bit = bKeepAlive;
+      }
+    }
     if (bUSBReady)
     {
-      if (HID_Read() == 2 && usbFromHost[0] == REPORT_ID_KEYBOARD)   // If a host LED indication response is available
+      if (HID_Read() == 2 && usbFromHost[0] == REPORT_ID_KEYBOARD)   // If a (complete) host LED indication response is available
       {
         leds.byte = usbFromHost[1];   // Remember the most recent LED status change
-        if (leds.bits.CapsLock)
-          CAPSLOCK_LED = ON;
-        else
-          CAPSLOCK_LED = OFF;
+        CAPSLOCK_LED = leds.bits.CapsLock; // Make the CAPSLOCK light match the CAPSLOCK state
       }
       if (!nRemainingTimerTicks)      // If the keepalive timer has popped
       {
         CAPSLOCK_LED ^= 1;            // Flash LED to indicate a keepalive is being sent
-        usbToHost[1] = 0b10111011;    // Right(GUI,SHIFT,CTL)+Left(GUI,SHIFT,CTL) <-- a very unusual combination requiring 6 simultaneous finger presses
-        bUSBReady = HID_Write(&usbToHost, 4) != 0; // Send a "no key pressed" signal to the host
-        usbToHost[1] = 0b00000000;    // No key pressed
-        bUSBReady = HID_Write(&usbToHost, 4) != 0; // Send a "no key pressed" signal to the host
+
+        usbToHost[3] = SCROLL_LOCK_KEY; // Scroll Lock is not widely used anymore and so is relatively harmless to inject
+        bUSBReady = HID_Write(&usbToHost, 4) != 0; // Send a "SCROLL LOCK key pressed" message to the host
+        usbToHost[3] = 0b00000000;    // No key pressed
+        bUSBReady = HID_Write(&usbToHost, 4) != 0; // Send a "no key pressed" message to the host
+
         Delay_ms(10);                 // Keep the LED on or off for a detectable amount of time
+
+        usbToHost[3] = SCROLL_LOCK_KEY; // Send SCROLL LOCK again to revert to the original scroll lock state
+        bUSBReady = HID_Write(&usbToHost, 4) != 0;
+        usbToHost[3] = 0b00000000;
+        bUSBReady = HID_Write(&usbToHost, 4) != 0;
+
         CAPSLOCK_LED ^= 1;            // Restore the original CAPSLOCK light state
-        nRemainingTimerTicks = INTERVAL_IN_SECONDS(10);
+        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
       }
     }
     else

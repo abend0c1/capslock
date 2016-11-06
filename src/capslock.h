@@ -18,8 +18,7 @@
 #define ELEMENTS(array) (sizeof(array)/sizeof(array[0]))
 #define CLOCK_FREQUENCY       (__FOSC__ * 1000)
 #define TIMER3_PRESCALER      8
-#define OVERHEAD 8
-#define INTERVAL_IN_SECONDS(n) (CLOCK_FREQUENCY / 4 / TIMER3_PRESCALER / 65536 * n + OVERHEAD)
+#define INTERVAL_IN_SECONDS(n) (n * CLOCK_FREQUENCY / 4 / TIMER3_PRESCALER / 65536)
 
 
 /*
@@ -43,11 +42,17 @@ typedef union
 
 t_ledIndicators leds;
 
+sbit BUTTON              at RB5_bit;
+#define BUTTON_PRESSED   !BUTTON
+
 #define CAPSLOCK_LED         LATA0_bit
 
-volatile uint8_t nRemainingTimerTicks;
+#define SCROLL_LOCK_KEY      0x47
+
+volatile uint16_t nRemainingTimerTicks;
 volatile uint8_t             cFlags;
 #define bUSBReady            cFlags.B0
+#define bKeepAlive           cFlags.B1
 
 // USB buffers must be in USB RAM, hence the "absolute" specifier...
 uint8_t BANK4_RESERVED_FOR_USB[256] absolute 0x400; // Prevent compiler from allocating
