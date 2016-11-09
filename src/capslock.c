@@ -27,15 +27,16 @@
 
 NAME     - CAP! CapsLock Light
 
-FUNCTION - This is a USB caps-lock-light-on-a-stick that lights up when the
+FUNCTION - This is a USB capslock-light-on-a-stick that lights up when the
            CapsLock LED would normally be lit. Some Lenovo laptops do not have
            a CapsLock LED.
            
            By default, the SCROLL LOCK keystroke is sent to the host every
            60 seconds. This behaviour can be toggled by pressing the button
            on the CapsLock dongle. The SCROLL LOCK light, present on many
-           keyboards, will flash to indicate the keystroke injection is
-           active.
+           older keyboards, will flash to indicate the keystroke injection is
+           active. The LED on this device will also briefly blink for each 
+           keystroke injection.
 
 
 FEATURES - 1. Absolutely NO HOST DRIVERS required.
@@ -44,13 +45,13 @@ FEATURES - 1. Absolutely NO HOST DRIVERS required.
 
 PIN USAGE -                     PIC16F1455
                            .------------------.
-            Vdd +5V    --- | RE3  1    14 RB7 | --- Vss GND ------.
-            BUTTON     --- | RA5  2    13 RA0 | --- USB D+        |
-            LED        --- | RA4  3    12 RA1 | --- USB D-        |
-           ~MCLR       --- | RA3  4    11 RB4 | --- Vusb -----||--' 2 x 100 nF
-                       --- | RC5  5    10 RC0 | ---
-                       --- | RC4  6     9 RC1 | --- PGD
-                       --- | RC3  7     8 RC2 | --- PGC
+            Vdd +5V    --- | RE3  1    14 RB7 | --- Vss 0V -------.
+            BUTTON     --> | RA5  2    13 RA0 | <-- USB D+        |
+            LED        <-- | RA4  3    12 RA1 | <-- USB D-        |
+           ~MCLR       --> | RA3  4    11 RB4 | --- Vusb -----||--' 2 x 100 nF
+                       --- | RC5  5    10 RC0 | <-- PGD
+                       --- | RC4  6     9 RC1 | <-- PGC
+                       --- | RC3  7     8 RC2 | ---
                            '------------------'
 
 
@@ -126,6 +127,7 @@ void enableUSB()
   usbToHost[2] = 0;                      // Reserved for OEM
   usbToHost[3] = 0;                      // No key pressed
   bUSBReady = FALSE;
+
   while (!bUSBReady)
   {
     HID_Enable(&usbFromHost, &usbToHost);
@@ -165,7 +167,8 @@ void Prolog()
   TRISA = 0b00100000;     // 1=Input, 0=Output
   TRISC = 0b00000000;
 
-  WPUA5_bit = 0;          // Enable weak pull-up on the button input
+  NOT_WPUEN_bit = 0;      // Enable weak pull-ups <-- Expect pain if this is not enabled
+  WPUA5_bit = 1;          // Enable weak pull-up on the button input
 
 // You can enable the PLL and set the PLL multipler two ways:
 // 1. At compile time - setting configuration fuses: CONFIG2.PLLEN and CONFIG2.PLLMULT
@@ -182,7 +185,6 @@ void Prolog()
 //                 xx       = SCS:      00=Clock determined by FOSC in Configuration Words
 
   while (!HFIOFS_bit);    // Wait for HFINTOSC to stabilise
-
   while(!PLLRDY_bit);     // Wait for PLL to lock
 
   ACTEN_bit = 0;          // Disable Active Clock Tuning, then...
@@ -222,6 +224,13 @@ void Prolog()
   enableUSB();            // Enable USB interface
 }
 
+void pressScrollLock()
+{
+  usbToHost[3] = SCROLL_LOCK_KEY; // Scroll Lock is not widely used anymore and so is relatively harmless to inject
+  while (!bUSBReady = HID_Write(&usbToHost, 4)); // Send a "SCROLL LOCK key pressed" message to the host
+  usbToHost[3] = 0b00000000;      // No key pressed
+  while (!bUSBReady = HID_Write(&usbToHost, 4)); // Send a "no key pressed" message to the host
+}
 
 #define KEEP_ALIVE_INTERVAL 60
 
@@ -229,7 +238,7 @@ void main()
 {
   Prolog();
   nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
-  TMR1ON_bit = 1;   // Enable keepalive interrupts
+  TMR1ON_bit = bKeepAlive;   // Enable keepalive interrupts
   while (1)
   {
     if (BUTTON_PRESSED)
@@ -252,24 +261,15 @@ void main()
       {
         leds.byte = usbFromHost[1];   // Remember the most recent LED status change
         CAPSLOCK_LED = leds.bits.CapsLock; // Make the CAPSLOCK light match the CAPSLOCK state
+        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
       }
       if (!nRemainingTimerTicks)      // If the keepalive timer has popped
       {
-        CAPSLOCK_LED ^= 1;            // Flash LED to indicate a keepalive is being sent
-
-        usbToHost[3] = SCROLL_LOCK_KEY; // Scroll Lock is not widely used anymore and so is relatively harmless to inject
-        bUSBReady = HID_Write(&usbToHost, 4) != 0; // Send a "SCROLL LOCK key pressed" message to the host
-        usbToHost[3] = 0b00000000;    // No key pressed
-        bUSBReady = HID_Write(&usbToHost, 4) != 0; // Send a "no key pressed" message to the host
-
-        Delay_ms(10);                 // Keep the LED on or off for a detectable amount of time
-
-        usbToHost[3] = SCROLL_LOCK_KEY; // Send SCROLL LOCK again to revert to the original scroll lock state
-        bUSBReady = HID_Write(&usbToHost, 4) != 0;
-        usbToHost[3] = 0b00000000;
-        bUSBReady = HID_Write(&usbToHost, 4) != 0;
-
-        CAPSLOCK_LED ^= 1;            // Restore the original CAPSLOCK light state
+        CAPSLOCK_LED ^= 1;            // Flash LED
+        pressScrollLock();            // Press harmless key (turns on Scroll Lock light on old keyboards)
+        pressScrollLock();            // Press harmless key (to reset Scroll Lock to its original state)
+        Delay_ms(10);                 // Keep the LED on or off for a human detectable amount of time
+        CAPSLOCK_LED ^= 1;            // Flash LED
         nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
       }
     }
@@ -283,7 +283,10 @@ void main()
 
 void interrupt()               // High priority interrupt service routine
 {
-  USB_Interrupt_Proc();        // Always give the USB module first opportunity to process
+  if (USBIF)
+  {
+    USB_Interrupt_Proc();      // Always give the USB module first opportunity to process (resets USBIF)
+  }
   if (TMR1IF_bit)              // Timer1 interrupt? (22.9 times/second)
   {
     nRemainingTimerTicks--;    // Decrement delay count
