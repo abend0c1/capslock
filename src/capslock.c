@@ -1,6 +1,6 @@
 /*
   CAP! CapsLock Light
-  Copyright (C) 2016 Andrew J. Armstrong
+  Copyright (C) 2016-2017 Andrew J. Armstrong
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,9 +31,11 @@ FUNCTION - This is a USB capslock-light-on-a-stick that lights up when the
            CapsLock LED would normally be lit. Some Lenovo laptops do not have
            a CapsLock LED.
            
-           By default, the SCROLL LOCK keystroke is sent to the host every
-           60 seconds. This behaviour can be toggled by pressing the button
-           on the CapsLock dongle. The SCROLL LOCK light, present on many
+           By default, the SCROLL LOCK keystroke and a micro mouse movement
+           is sent to the host every 60 seconds to prevent the host from
+           detecting a "time out" situation.
+           This behaviour can be toggled by pressing the button on the
+           CapsLock dongle. The SCROLL LOCK light, present on many
            older keyboards, will flash to indicate the keystroke injection is
            active. The LED on this device will also briefly blink for each 
            keystroke injection.
@@ -108,6 +110,7 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20170413 1.01  AJA Added micro mouse movements too
            20161030 1.00  AJA Initial version
 
 -------------------------------------------------------------------------------
@@ -224,13 +227,25 @@ void Prolog()
   enableUSB();            // Enable USB interface
 }
 
-void pressScrollLock()
+
+void pressKey (uint8_t key)
 {
-  usbToHost[3] = SCROLL_LOCK_KEY; // Scroll Lock is not widely used anymore and so is relatively harmless to inject
+  usbToHost[0] = REPORT_ID_KEYBOARD;     // Report Id = Keyboard
+  usbToHost[1] = 0x00;                   // Key modifier usages
+  usbToHost[2] = 0x00;                   // Reserved
+  usbToHost[3] = key;                    // Key usage code
   while (!bUSBReady = HID_Write(&usbToHost, 4)); // Send a "SCROLL LOCK key pressed" message to the host
-  usbToHost[3] = 0b00000000;      // No key pressed
+  usbToHost[3] = 0b00000000;             // No key pressed
   while (!bUSBReady = HID_Write(&usbToHost, 4)); // Send a "no key pressed" message to the host
 }
+
+void moveMouse(int8_t deltaX)
+{
+  usbToHost[0] = REPORT_ID_MOUSE;     // Report Id = Mouse
+  usbToHost[1] = deltaX;              // Move the mouse horizontally by this amount
+  while (!bUSBReady = HID_Write(&usbToHost, 2)); // Send a mouse movement
+}
+
 
 #define KEEP_ALIVE_INTERVAL 60
 
@@ -261,16 +276,18 @@ void main()
       {
         leds.byte = usbFromHost[1];   // Remember the most recent LED status change
         CAPSLOCK_LED = leds.bits.CapsLock; // Make the CAPSLOCK light match the CAPSLOCK state
-        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
+        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL); // User has pressed CAPSLOCK, so check again in a little while
       }
-      if (!nRemainingTimerTicks)      // If the keepalive timer has popped
+
+      if (nRemainingTimerTicks == 0)  // If the keepalive timer has popped
       {
         CAPSLOCK_LED ^= 1;            // Flash LED
-        pressScrollLock();            // Press harmless key (turns on Scroll Lock light on old keyboards)
-        pressScrollLock();            // Press harmless key (to reset Scroll Lock to its original state)
-        Delay_ms(10);                 // Keep the LED on or off for a human detectable amount of time
+        pressKey(SCROLL_LOCK_KEY);    // Press harmless key (turns on Scroll Lock light on old keyboards)
+        pressKey(SCROLL_LOCK_KEY);    // Press harmless key (to reset Scroll Lock to its original state)
+        moveMouse(+1);                // Move the mouse to the right
+        moveMouse(-1);                // Move the mouse to the left
         CAPSLOCK_LED ^= 1;            // Flash LED
-        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
+        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);  // Check again in a little while
       }
     }
     else

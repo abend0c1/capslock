@@ -6,7 +6,7 @@ Value=0
 [BUILD_TYPE]
 Value=0
 [ACTIVE_TAB]
-Value=capslock.c
+Value=USBdsc.c
 [USE_EEPROM]
 Value=0
 [USE_HEAP]
@@ -25,11 +25,13 @@ Count=0
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-Count=4
+Count=6
 File0=capslock.h
 File1=capslock.lst
 File2=USBdsc.c
 File3=capslock.c
+File4=USBdsc.asm
+File5=USBdsc.h
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
