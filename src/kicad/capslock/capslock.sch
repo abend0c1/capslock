@@ -1,0 +1,430 @@
+EESchema Schematic File Version 3
+LIBS:myKicadLib
+LIBS:power
+LIBS:device
+LIBS:linear
+LIBS:regul
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:MCU_Microchip_PIC16
+LIBS:ac-dc
+LIBS:Altera
+LIBS:analog_devices
+LIBS:Battery_Management
+LIBS:bbd
+LIBS:bosch
+LIBS:brooktre
+LIBS:Connector
+LIBS:dc-dc
+LIBS:Diode
+LIBS:Display
+LIBS:driver_gate
+LIBS:DSP_Microchip_DSPIC33
+LIBS:elec-unifil
+LIBS:ESD_Protection
+LIBS:Espressif
+LIBS:FPGA_Actel
+LIBS:ftdi
+LIBS:gennum
+LIBS:Graphic
+LIBS:hc11
+LIBS:infineon
+LIBS:intersil
+LIBS:ir
+LIBS:Lattice
+LIBS:LED
+LIBS:LEM
+LIBS:Logic_74xgxx
+LIBS:Logic_74xx
+LIBS:Logic_CMOS_4000
+LIBS:Logic_CMOS_IEEE
+LIBS:logic_programmable
+LIBS:Logic_TTL_IEEE
+LIBS:maxim
+LIBS:MCU_Microchip_PIC10
+LIBS:MCU_Microchip_PIC12
+LIBS:MCU_Microchip_PIC18
+LIBS:MCU_Microchip_PIC24
+LIBS:MCU_Microchip_PIC32
+LIBS:MCU_NXP_Kinetis
+LIBS:MCU_NXP_LPC
+LIBS:MCU_NXP_S08
+LIBS:MCU_ST_STM8
+LIBS:MCU_ST_STM32
+LIBS:MCU_Texas_MSP430
+LIBS:Mechanical
+LIBS:modules
+LIBS:Motor
+LIBS:motor_drivers
+LIBS:nordicsemi
+LIBS:nxp
+LIBS:onsemi
+LIBS:Oscillators
+LIBS:powerint
+LIBS:Power_Management
+LIBS:pspice
+LIBS:references
+LIBS:Relay
+LIBS:rfcom
+LIBS:RFSolutions
+LIBS:Sensor_Current
+LIBS:sensors
+LIBS:silabs
+LIBS:supertex
+LIBS:Switch
+LIBS:Transformer
+LIBS:Transistor
+LIBS:triac_thyristor
+LIBS:Valve
+LIBS:video
+LIBS:wiznet
+LIBS:Worldsemi
+LIBS:Xicor
+LIBS:zetex
+LIBS:Zilog
+LIBS:capslock-cache
+EELAYER 26 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L PIC16(L)F1455-I/ST U1
+U 1 1 59E17EB7
+P 6650 3150
+F 0 "U1" H 6650 4028 50  0000 C CNN
+F 1 "PIC16(L)F1455-I/ST" H 6650 3937 50  0000 C CNN
+F 2 "SMD_Packages:SSOP-14" H 6650 3150 50  0001 C CNN
+F 3 "" H 6650 3150 50  0001 C CNN
+	1    6650 3150
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C2
+U 1 1 59E1805A
+P 4200 4200
+F 0 "C2" H 4315 4246 50  0000 L CNN
+F 1 "470nF" H 4315 4155 50  0000 L CNN
+F 2 "Capacitors_SMD:C_1206" H 4238 4050 50  0001 C CNN
+F 3 "" H 4200 4200 50  0001 C CNN
+	1    4200 4200
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C1
+U 1 1 59E18100
+P 3900 1650
+F 0 "C1" H 4015 1696 50  0000 L CNN
+F 1 "100nF" H 4015 1605 50  0000 L CNN
+F 2 "Capacitors_SMD:C_1206" H 3938 1500 50  0001 C CNN
+F 3 "" H 3900 1650 50  0001 C CNN
+	1    3900 1650
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR06
+U 1 1 59E182A4
+P 6650 4550
+F 0 "#PWR06" H 6650 4300 50  0001 C CNN
+F 1 "GND" H 6655 4377 50  0000 C CNN
+F 2 "" H 6650 4550 50  0001 C CNN
+F 3 "" H 6650 4550 50  0001 C CNN
+	1    6650 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR04
+U 1 1 59E182DB
+P 4200 4550
+F 0 "#PWR04" H 4200 4300 50  0001 C CNN
+F 1 "GND" H 4205 4377 50  0000 C CNN
+F 2 "" H 4200 4550 50  0001 C CNN
+F 3 "" H 4200 4550 50  0001 C CNN
+	1    4200 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L LED D1
+U 1 1 59E183E5
+P 3700 4200
+F 0 "D1" V 3738 4083 50  0000 R CNN
+F 1 "LED" V 3647 4083 50  0000 R CNN
+F 2 "LEDs:LED_1206" H 3700 4200 50  0001 C CNN
+F 3 "" H 3700 4200 50  0001 C CNN
+	1    3700 4200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R1
+U 1 1 59E185B0
+P 3700 3700
+F 0 "R1" H 3770 3746 50  0000 L CNN
+F 1 "470Ω" H 3770 3655 50  0000 L CNN
+F 2 "Resistors_SMD:R_1206" V 3630 3700 50  0001 C CNN
+F 3 "" H 3700 3700 50  0001 C CNN
+	1    3700 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR02
+U 1 1 59E18717
+P 3700 4550
+F 0 "#PWR02" H 3700 4300 50  0001 C CNN
+F 1 "GND" H 3705 4377 50  0000 C CNN
+F 2 "" H 3700 4550 50  0001 C CNN
+F 3 "" H 3700 4550 50  0001 C CNN
+	1    3700 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L USB_A_PLUG J1
+U 1 1 59E187DF
+P 2900 3050
+F 0 "J1" H 2955 3517 50  0000 C CNN
+F 1 "USB_A" H 2955 3426 50  0000 C CNN
+F 2 "myKicadStuff:USB-SMT-plug" H 3050 3000 50  0001 C CNN
+F 3 "" H 3050 3000 50  0001 C CNN
+	1    2900 3050
+	1    0    0    -1  
+$EndComp
+Text Label 4200 3850 0    60   ~ 0
+VUSB
+Text Label 4300 2850 0    60   ~ 0
+VUSB
+$Comp
+L GND #PWR01
+U 1 1 59E18FFA
+P 2900 4550
+F 0 "#PWR01" H 2900 4300 50  0001 C CNN
+F 1 "GND" H 2905 4377 50  0000 C CNN
+F 2 "" H 2900 4550 50  0001 C CNN
+F 3 "" H 2900 4550 50  0001 C CNN
+	1    2900 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR03
+U 1 1 59E19050
+P 3900 2000
+F 0 "#PWR03" H 3900 1750 50  0001 C CNN
+F 1 "GND" H 3905 1827 50  0000 C CNN
+F 2 "" H 3900 2000 50  0001 C CNN
+F 3 "" H 3900 2000 50  0001 C CNN
+	1    3900 2000
+	1    0    0    -1  
+$EndComp
+Text Label 4300 3250 0    60   ~ 0
+VPP
+Text Label 8700 2850 0    60   ~ 0
+PGD
+Text Label 8700 2950 0    60   ~ 0
+PGC
+$Comp
+L Test_Point P1
+U 1 1 59E1939A
+P 10150 2650
+F 0 "P1" V 10104 2838 50  0001 L CNN
+F 1 "VDD" V 10150 2838 50  0000 L CNN
+F 2 "myKicadStuff:1pin" H 10350 2650 50  0001 C CNN
+F 3 "" H 10350 2650 50  0001 C CNN
+	1    10150 2650
+	0    1    1    0   
+$EndComp
+$Comp
+L Test_Point P2
+U 1 1 59E1942E
+P 10150 2750
+F 0 "P2" V 10104 2938 50  0001 L CNN
+F 1 "VPP" V 10150 2938 50  0000 L CNN
+F 2 "myKicadStuff:1pin" H 10350 2750 50  0001 C CNN
+F 3 "" H 10350 2750 50  0001 C CNN
+	1    10150 2750
+	0    1    1    0   
+$EndComp
+$Comp
+L Test_Point P3
+U 1 1 59E19485
+P 10150 2850
+F 0 "P3" V 10104 3037 50  0001 L CNN
+F 1 "PGD" V 10150 3037 50  0000 L CNN
+F 2 "myKicadStuff:1pin" H 10350 2850 50  0001 C CNN
+F 3 "" H 10350 2850 50  0001 C CNN
+	1    10150 2850
+	0    1    1    0   
+$EndComp
+$Comp
+L Test_Point P4
+U 1 1 59E194A8
+P 10150 2950
+F 0 "P4" V 10104 3137 50  0001 L CNN
+F 1 "PGC" V 10150 3137 50  0000 L CNN
+F 2 "myKicadStuff:1pin" H 10350 2950 50  0001 C CNN
+F 3 "" H 10350 2950 50  0001 C CNN
+	1    10150 2950
+	0    1    1    0   
+$EndComp
+$Comp
+L Test_Point P5
+U 1 1 59E194D5
+P 10150 3050
+F 0 "P5" V 10104 3237 50  0001 L CNN
+F 1 "VSS" V 10150 3237 50  0000 L CNN
+F 2 "myKicadStuff:1pin" H 10350 3050 50  0001 C CNN
+F 3 "" H 10350 3050 50  0001 C CNN
+	1    10150 3050
+	0    1    1    0   
+$EndComp
+Text Label 9800 2750 0    60   ~ 0
+VPP
+$Comp
+L GND #PWR08
+U 1 1 59E19A4E
+P 10050 3250
+F 0 "#PWR08" H 10050 3000 50  0001 C CNN
+F 1 "GND" H 10055 3077 50  0000 C CNN
+F 2 "" H 10050 3250 50  0001 C CNN
+F 3 "" H 10050 3250 50  0001 C CNN
+	1    10050 3250
+	1    0    0    -1  
+$EndComp
+$Comp
+L VDD #PWR05
+U 1 1 59E19C75
+P 6650 1350
+F 0 "#PWR05" H 6650 1200 50  0001 C CNN
+F 1 "VDD" H 6667 1523 50  0000 C CNN
+F 2 "" H 6650 1350 50  0001 C CNN
+F 3 "" H 6650 1350 50  0001 C CNN
+	1    6650 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L VDD #PWR07
+U 1 1 59E19E0C
+P 10050 2450
+F 0 "#PWR07" H 10050 2300 50  0001 C CNN
+F 1 "VDD" H 10067 2623 50  0000 C CNN
+F 2 "" H 10050 2450 50  0001 C CNN
+F 3 "" H 10050 2450 50  0001 C CNN
+	1    10050 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C3
+U 1 1 59E19F52
+P 9250 2650
+F 0 "C3" H 9365 2696 50  0000 L CNN
+F 1 "2.2μF" H 9365 2605 50  0000 L CNN
+F 2 "Capacitors_SMD:C_1206" H 9288 2500 50  0001 C CNN
+F 3 "" H 9250 2650 50  0001 C CNN
+	1    9250 2650
+	1    0    0    -1  
+$EndComp
+Text Label 4300 3050 0    60   ~ 0
+D+
+Text Label 4300 3150 0    60   ~ 0
+D-
+Text Label 3700 4050 0    60   ~ 0
+N1
+NoConn ~ 8650 3050
+Wire Wire Line
+	4200 2850 4200 4050
+Wire Wire Line
+	4200 4550 4200 4350
+Wire Wire Line
+	3700 3850 3700 4050
+Wire Wire Line
+	3700 4350 3700 4550
+Wire Wire Line
+	4200 2850 4650 2850
+Wire Wire Line
+	3200 3050 4650 3050
+Wire Wire Line
+	3200 3150 4650 3150
+Wire Wire Line
+	2900 3450 2900 4550
+Wire Wire Line
+	3200 2850 3200 1500
+Connection ~ 3900 1500
+Wire Wire Line
+	3900 1800 3900 2000
+Wire Wire Line
+	3200 1500 6650 1500
+Wire Wire Line
+	6650 1350 6650 2450
+Wire Wire Line
+	6650 4550 6650 3850
+Wire Wire Line
+	4650 3250 4300 3250
+Wire Wire Line
+	10050 2450 10050 2650
+Wire Wire Line
+	10050 2650 10150 2650
+Wire Wire Line
+	8650 2850 10150 2850
+Wire Wire Line
+	8650 2950 10150 2950
+Wire Wire Line
+	10150 2750 9800 2750
+Wire Wire Line
+	10050 3050 10050 3250
+Wire Wire Line
+	10050 3050 10150 3050
+Connection ~ 6650 1500
+Wire Wire Line
+	9250 2500 10050 2500
+Connection ~ 10050 2500
+Wire Wire Line
+	9250 3150 9250 2800
+Wire Wire Line
+	9250 3150 10050 3150
+Connection ~ 10050 3150
+Wire Wire Line
+	3700 3350 4650 3350
+Text Label 4300 3350 0    60   ~ 0
+RA4
+Wire Wire Line
+	3700 3350 3700 3550
+NoConn ~ 8650 3150
+NoConn ~ 8650 3250
+NoConn ~ 8650 3350
+Wire Wire Line
+	4650 3450 4300 3450
+NoConn ~ 4300 3450
+Text Label 4300 3450 0    60   ~ 0
+RA5
+Text Label 8650 3050 0    60   ~ 0
+RC2
+Text Label 8650 3150 0    60   ~ 0
+RC3
+Text Label 8650 3250 0    60   ~ 0
+RC4
+Text Label 8650 3350 0    60   ~ 0
+RC5
+$EndSCHEMATC
