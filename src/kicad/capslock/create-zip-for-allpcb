@@ -1,0 +1,3 @@
+#!/bin/bash
+export fn=capslock-2.00
+zip ./$fn-$1.zip ./gerber/*.gbr ./gerber/*.drl
