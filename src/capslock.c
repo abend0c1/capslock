@@ -30,30 +30,27 @@ NAME     - CAP! CapsLock Light
 FUNCTION - This is a USB capslock-light-on-a-stick that lights up when the
            CapsLock LED would normally be lit. Some Lenovo laptops do not have
            a CapsLock LED.
-           
+
            By default, the SCROLL LOCK keystroke and a micro mouse movement
            is sent to the host every 60 seconds to prevent the host from
            detecting a "time out" situation.
-           This behaviour can be toggled by pressing the button on the
-           CapsLock dongle. The SCROLL LOCK light, present on many
-           older keyboards, will flash to indicate the keystroke injection is
-           active. The LED on this device will also briefly blink for each 
-           keystroke injection.
+
+           The SCROLL LOCK light, present on many older keyboards, will flash
+           to indicate the keystroke injection is active. The LED on this
+           device will also briefly blink for each keystroke injection.
 
 
 FEATURES - 1. Absolutely NO HOST DRIVERS required.
-           2. The user can press the button to toggle the sending of "keep
-              alive" keystrokes.
 
 PIN USAGE -                     PIC16F1455
                            .------------------.
             Vdd +5V    --- | RE3  1    14 RB7 | --- Vss 0V -------.
-            BUTTON     --> | RA5  2    13 RA0 | <-- USB D+        |
+                   n/c --- | RA5  2    13 RA0 | <-- USB D+        |
             LED        <-- | RA4  3    12 RA1 | <-- USB D-        |
            ~MCLR       --> | RA3  4    11 RB4 | --- Vusb -----||--' 2 x 100 nF
-                       --- | RC5  5    10 RC0 | <-- PGD
-                       --- | RC4  6     9 RC1 | <-- PGC
-                       --- | RC3  7     8 RC2 | ---
+                   n/c --- | RC5  5    10 RC0 | <-- PGD
+                   n/c --- | RC4  6     9 RC1 | <-- PGC
+                   n/c --- | RC3  7     8 RC2 | --- n/c
                            '------------------'
 
 
@@ -72,7 +69,7 @@ CONFIG    - The PIC16F1455 configuration fuses should be set as follows (items
                                     x      =  ~PWRTE:    1=Power-Up Timer disabled
                                      xx    =  WDTE:      00=Watchdog Timer disabled
                                        xxx = *FOSC:      100=INTOSC oscillator: I/O function on OSC1 pin
-                                        
+
             CONFIG2  1EC3 0001111011000011
                           xx               =  Unimplemented
                             x              =  LVP:       0=Low Voltage Programming: High-voltage on ~MCLR must be used for programming
@@ -110,6 +107,7 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20171102 2.00  AJA Removed button from the PCB
            20170413 1.01  AJA Added micro mouse movements too
            20161030 1.00  AJA Initial version
 
@@ -167,11 +165,10 @@ void Prolog()
   LATC = 0;
 
   //        76543210
-  TRISA = 0b00100000;     // 1=Input, 0=Output
+  TRISA = 0b00000000;     // 1=Input, 0=Output
   TRISC = 0b00000000;
 
   NOT_WPUEN_bit = 0;      // Enable weak pull-ups <-- Expect pain if this is not enabled
-  WPUA5_bit = 1;          // Enable weak pull-up on the button input
 
 // You can enable the PLL and set the PLL multipler two ways:
 // 1. At compile time - setting configuration fuses: CONFIG2.PLLEN and CONFIG2.PLLMULT
@@ -256,20 +253,6 @@ void main()
   TMR1ON_bit = bKeepAlive;   // Enable keepalive interrupts
   while (1)
   {
-    if (BUTTON_PRESSED)
-    {
-      Delay_ms(25);                   // Cheap button debounce
-      if (BUTTON_PRESSED)             // If button still pressed after debounce delay
-      {
-        TMR1ON_bit = 0;               // Prevent keystroke injection while the button is pressed
-        CAPSLOCK_LED ^= 1;            // Flash LED to acknowledge button press
-        while (BUTTON_PRESSED);       // Wait until button is released
-        CAPSLOCK_LED ^= 1;            // Restore LED status
-        bKeepAlive ^= 1;              // Toggle injecting "keep alive" keystrokes
-        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
-        TMR1ON_bit = bKeepAlive;
-      }
-    }
     if (bUSBReady)
     {
       if (HID_Read() == 2 && usbFromHost[0] == REPORT_ID_KEYBOARD)   // If a (complete) host LED indication response is available
