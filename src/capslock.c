@@ -1,6 +1,6 @@
 /*
   CAP! CapsLock Light
-  Copyright (C) 2016 Andrew J. Armstrong
+  Copyright (C) 2016-2017 Andrew J. Armstrong
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,11 @@
 
 NAME     - CAP! CapsLock Light
 
+<<<<<<< HEAD
 FUNCTION - This is a USB caps-lock-light-on-a-stick that lights up when the
+=======
+FUNCTION - This is a USB capslock-light-on-a-stick that lights up when the
+>>>>>>> randommouse
            CapsLock LED would normally be lit. Some Lenovo laptops do not have
            a CapsLock LED.
            
@@ -38,10 +42,20 @@ FUNCTION - This is a USB caps-lock-light-on-a-stick that lights up when the
            active.
 
 
+           By default, the SCROLL LOCK keystroke
+           is sent to the host every 60 seconds to prevent the host from
+           detecting a "time out" situation.
+
+           The SCROLL LOCK light, present on many older keyboards, will flash
+           to indicate the keystroke injection is active. The LED on this
+           device will also briefly blink for each keystroke injection.
+
+
 FEATURES - 1. Absolutely NO HOST DRIVERS required.
            2. The user can press the button to toggle the sending of "keep
               alive" keystrokes.
 
+<<<<<<< HEAD
 PIN USAGE -                     PIC18F25K50
                            .------------------.                 .-- IOC
             MCLR       --> | RE3  1    28 RB7 | <-- PGD         | |
@@ -58,51 +72,53 @@ PIN USAGE -                     PIC18F25K50
                        <-- | RC1  12   17 RC6 | --> TX
                        <-- | RC2  13   16 RC5 | <-> USB D+
             2 x 100 nF --- | VUSB 14   15 RC4 | <-> USB D-
+=======
+PIN USAGE -                     PIC16F1455
+                           .------------------.
+            Vdd +5V    --- | RE3  1    14 RB7 | --- Vss 0V -------.
+                   n/c --- | RA5  2    13 RA0 | <-- USB D+        |
+            LED        <-- | RA4  3    12 RA1 | <-- USB D-        |
+           ~MCLR       --> | RA3  4    11 RB4 | --- Vusb -----||--' 2 x 100 nF
+                   n/c --- | RC5  5    10 RC0 | <-- PGD
+                   n/c --- | RC4  6     9 RC1 | <-- PGC
+                   n/c --- | RC3  7     8 RC2 | --- n/c
+>>>>>>> randommouse
                            '------------------'
 
 
-CONFIG    - The PIC18F25K50 configuration fuses should be set as follows (items
+CONFIG    - The PIC16F1455 configuration fuses should be set as follows (items
             marked with '*' are essential for this program to operate correctly):
 
-            CONFIG1L 2B 00101011
-                          1      = *LS48MHZ: System clock is expected at 48 MHz, FS/LS USB clock divide-by is set to 8
-                           01    = *CPUDIV: CPU system clock (48 MHz) divided by 2 (= 24 MHZ)
-                             0   =  Unimplemented
-                              x  =  CFGPLLEN: (ignored, set dynamically)
-                               x =  PLLSEL: (ignored, set dynamically)
-            CONFIG1H 28 00101000
-                        0        =  IESO: Oscillator Switchover mode disabled
-                         0       =  FCMEN: Fail-Safe Clock Monitor disabled
-                          1      = *PCLKEN: Primary Clock is always enabled
-                           0     =  Unimplemented
-                            1000 = *FOSC: Internal oscillator block
-            CONFIG2L 5F 01011111
-                        0        =  Unimplemented
-                         1       =  LPBOR: Low-Power Brown-out Reset disabled
-                          0      =  Unimplemented
-                           11    =  BORV: VBOR set to 1.9V nominal
-                             11  =  BOREN: Brown-out Reset enabled in hardware only (SBOREN is disabled)
-                               1 =  PWRTEN: Power-up Timer disabled
-            CONFIG2H 3C 00111100
-                        00       =  Unimplemented
-                          1111   =  WDTPS: Watchdog Timer Postscale Select = 1:32768
-                              00 =  WDTEN: Watchdog Timer disabled in hardware, SWDTEN bit disabled
-            CONFIG3L 00 00000000
-                        00000000 =  Unimplemented
-            CONFIG3H 53 01010000
-                        0        = *MCLRE: RE3 input pin enabled; MCLR disabled
-                         1       =  SDOMX: SDO is on RB3
-                          0      =  Unimplemented
-                           1     =  T3CMX: T3CKI is on RC0
-                            00   =  Unimplemented
-                              0  =  PDADEN: ANSELB<5:0> resets to 0, PORTB<4:0> pins are configured as digital I/O on Reset
-                               0 =  CCP2MX: CCP2 input/output is multiplexed with RB3
-            CONFIG4L 81 10000001 =  Default
-            CONFIG5L 0F 00001111 =  Default
-            CONFIG5H C0 11000000 =  Default
-            CONFIG6L 0F 00001111 =  Default
+            CONFIG1  3EA4 0011111010100100
+                          xx               =  Unimplemented
+                            x              =  FCMEM:     1=Fail-Safe Clock Monitor is enabled
+                             x             =  IESO:      1=Internal/External Switchover mode is enabled
+                              x            =  ~CLKOUTEN: 1=CLKOUT function is disabled. I/O or oscillator function on CLKOUT pin
+                               xx          =  BOREN:     11=BOR enabled
+                                 x         =  Unimplemented
+                                  x        =  ~CP:       1=Program memory code protection is disabled
+                                   x       = *MCLRE:     0=MCLR internally disabled
+                                    x      =  ~PWRTE:    1=Power-Up Timer disabled
+                                     xx    =  WDTE:      00=Watchdog Timer disabled
+                                       xxx = *FOSC:      100=INTOSC oscillator: I/O function on OSC1 pin
 
-OPERATION - Plug it in.
+            CONFIG2  1EC3 0001111011000011
+                          xx               =  Unimplemented
+                            x              =  LVP:       0=Low Voltage Programming: High-voltage on ~MCLR must be used for programming
+                             x             =  ~DEBUG:    1=In-Circuit Debugger disabled, ICSPCLK and ICSPDAT are general purpose I/O pins
+                              x            =  ~LPBOR:    1=Low-Power Brown-out Reset is disabled
+                               x           =  BORV:      1=Brown-out Reset voltage (Vbor), low trip point selected
+                                x          =  STVREN:    1=Stack Overflow or Underflow will cause a Reset
+                                 x         = *PLLEN:     0=PLL is disabled (it will be enabled under software control)
+                                  x        = *PLLMULT:   1=3x PLL Output Frequency is selected
+                                   x       = *USBLSCLK:  1=USB Clock divide-by 8 (48 MHz system input clock expected)
+                                    xx     = *CPUDIV:    00=No CPU system clock divide
+                                      xx   =  Unimplemented
+                                        xx =  WRT:       11=Flash Memory Self-Write Protection bits: Write protection off
+
+
+
+OPERATION - Plug it in (relaxen und watschen der blinkenlichten)
 
 NOTES    - 1. The source code is written in MikroC Pro from mikroe.com
 
@@ -123,6 +139,9 @@ AUTHORS  - Init Name                 Email
 
 HISTORY  - Date     Ver   By  Reason (most recent at the top please)
            -------- ----- --- -------------------------------------------------
+           20171219 2.01  AJA Converted to a BOOT keyboard and removed mouse
+           20171102 2.00  AJA Removed button from the PCB
+           20170413 1.01  AJA Added micro mouse movements too
            20161030 1.00  AJA Initial version
 
 -------------------------------------------------------------------------------
@@ -137,11 +156,16 @@ void enableUSB()
 {
   uint8_t i;
 
-  usbToHost[0] = REPORT_ID_KEYBOARD;     // Report Id = Keyboard
-  usbToHost[1] = 0;                      // No modifiers
-  usbToHost[2] = 0;                      // Reserved for OEM
+  usbToHost[0] = 0;                      // No modifiers
+  usbToHost[1] = 0;                      // Reserved for OEM
+  usbToHost[2] = 0;                      // No key pressed
   usbToHost[3] = 0;                      // No key pressed
+  usbToHost[4] = 0;                      // No key pressed
+  usbToHost[5] = 0;                      // No key pressed
+  usbToHost[6] = 0;                      // No key pressed
+  usbToHost[7] = 0;                      // No key pressed
   bUSBReady = FALSE;
+
   while (!bUSBReady)
   {
     HID_Enable(&usbFromHost, &usbToHost);
@@ -149,7 +173,7 @@ void enableUSB()
     {
       Delay_ms(100);
       CAPSLOCK_LED = ON;
-      bUSBReady = HID_Write(&usbToHost, 4) != 0; // Copy to USB buffer and try to send
+      bUSBReady = HID_Write(&usbToHost, sizeof usbToHost) != 0; // Copy to USB buffer and try to send
       CAPSLOCK_LED = OFF;
     }
     if (!bUSBReady)
@@ -172,15 +196,14 @@ void disableUSB()
 void Prolog()
 {
   ANSELA = 0b00000000;    // Configure all PORTA bits as digital
-  ANSELB = 0b00000000;    // Configure all PORTB bits as digital
   ANSELC = 0b00000000;    // Configure all PORTC bits as digital
 
   LATA = 0;
-  LATB = 0;
   LATC = 0;
 
   //        76543210
   TRISA = 0b00000000;     // 1=Input, 0=Output
+<<<<<<< HEAD
   TRISB = 0b00100000;
   TRISC = 0b00110000;
 
@@ -194,18 +217,27 @@ void Prolog()
 //                 xx       00 = SCS: Primary clock (determined by FOSC in CONFIG1H)
   while (!HFIOFS_bit);    // Wait for HFINTOSC to stabilise
   while (!OSTS_bit);      // Wait until FOSC<3:0> is being used
+=======
+  TRISC = 0b00000000;
+
+  NOT_WPUEN_bit = 0;      // Enable weak pull-ups <-- Expect pain if this is not enabled
+>>>>>>> randommouse
 
 // You can enable the PLL and set the PLL multipler two ways:
-// 1. At compile time - setting configuration fuses: CFGPLLEN and PLLSEL
+// 1. At compile time - setting configuration fuses: CONFIG2.PLLEN and CONFIG2.PLLMULT
 //    ...but only if you use an External Clock (EC).
-// 2. At run time - setting OSCCON2.PLLEN and OSCTUNE.SPLLMULT
+// 2. At run time - setting OSCCON.SPLLEN and OSCCON.SPLLMULT
 //    ...but only if you use a High Speed crystal (HS), or
 //       the High Frequency Internal Oscillator (HFINTOSC).
 // This project uses the HFINTOSC set to run at 16 MHz and the only valid
 // PLL multiplier for USB is x3.
-  PLLEN_bit = 0;          // OSCCON2.PLLEN = 0:    Disable the PLL, then...
-  SPLLMULT_bit = 1;       // OSCTUNE.SPLLMULT = 1: Set the PLL multiplier to x3
-  PLLEN_bit = 1;          // OSCCON2.PLLEN = 1:    Now re-enable the PLL
+  OSCCON = 0b11111100;
+//           x              = SPPLEN:   1=PLL is enabled
+//            x             = SPLLMULT: 1=3x PLL is enabled
+//             xxxx         = IRCF:     1111=16 MHz or 48 MHz
+//                 xx       = SCS:      00=Clock determined by FOSC in Configuration Words
+
+  while (!HFIOFS_bit);    // Wait for HFINTOSC to stabilise
   while(!PLLRDY_bit);     // Wait for PLL to lock
 
   ACTEN_bit = 0;          // Disable Active Clock Tuning, then...
@@ -216,21 +248,21 @@ void Prolog()
   cFlags = 0;             // Reset all flags
   bKeepAlive = 1;         // Enable "keep alive" keystroke injection
 
-  // Set up USB
+  // Set up USB (only do this while the USB module is disabled)
   UPUEN_bit = 1;          // USB On-chip pull-up enable
   FSEN_bit = 1;           // 1 = USB Full Speed enabled (requires 48 MHz USB clock)
                           // 0 = USB Full Speed disabled (requires 6 MHz USB clock)
 
-// Timer3 is used for human-scale delays (Timer3 is not always enabled)
-  T3CON   = 0b00110010;
-//            xx             00 = TMR3CS: Timer3 clock source is instruction clock (Fosc/4)
-//              xx           11 = TMR3PS: Timer3 prescale value is 1:8
-//                x          0  = SOSCEN: Secondary Oscillator disabled
-//                 x         0  = T3SYNC: Ignored because TMR3CS = 0x
-//                  x        1  = RD16:   Enables register read/write of Timer3 in one 16-bit operation
-//                   x       0  = TMR3ON: Timer3 is off
-// Timer3 tick rate = 48 MHz FOSC/4/8 = 1.5 MHz (667 ns)
-// Timer3 interrupt rate = 1.5 MHz / 65536 = 22.9 times per second
+// Timer1 is used for human-scale delays (Timer1 is not always enabled)
+  T1CON   = 0b00110010;
+//            xx             TMR1CS:  00=Timer1 clock source is instruction clock (Fosc/4)
+//              xx           T1CKPS:  11=Timer1 prescale value is 1:8
+//                x          T1OSCEN: 0=Low Power oscillator circuit disabled
+//                 x        ~T1SYNC:  0=Synchronize asynchronous clock input with system clock (Fosc)
+//                  x        Unimplemented
+//                   x       TMR1ON:  0=Timer1 is off
+// Timer1 tick rate = 48 MHz FOSC/4/8 = 1.5 MHz (667 ns)
+// Timer1 interrupt rate = 1.5 MHz / 65536 = 22.9 times per second
 
   CAPSLOCK_LED = OFF;
 
@@ -238,7 +270,11 @@ void Prolog()
 // Let the interrupts begin
 //----------------------------------------------------------------------------
 
+<<<<<<< HEAD
   TMR3IE_bit = 1;         // Enable Timer3 interrupts (for keepalive)
+=======
+  TMR1IE_bit = 1;         // Enable Timer1 interrupts (for keepalive)
+>>>>>>> randommouse
   PEIE_bit = 1;           // Enable peripheral interrupts
   GIE_bit = 1;            // Enable global interrupts
 
@@ -246,13 +282,31 @@ void Prolog()
 }
 
 
+<<<<<<< HEAD
+=======
+void pressKey (uint8_t key)
+{
+  usbToHost[0] = 0x00;                   // Key modifier usages
+  usbToHost[1] = 0x00;                   // Reserved
+  usbToHost[2] = key;                    // Key usage code
+  while (!bUSBReady = HID_Write(&usbToHost, sizeof usbToHost)); // Send a "SCROLL LOCK key pressed" message to the host
+  usbToHost[2] = 0b00000000;             // No key pressed
+  while (!bUSBReady = HID_Write(&usbToHost, sizeof usbToHost)); // Send a "no key pressed" message to the host
+}
+
+
+>>>>>>> randommouse
 #define KEEP_ALIVE_INTERVAL 60
 
 void main()
 {
   Prolog();
   nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
+<<<<<<< HEAD
   TMR3ON_bit = 1;   // Enable keepalive interrupts
+=======
+  TMR1ON_bit = bKeepAlive;   // Enable keepalive interrupts
+>>>>>>> randommouse
   while (1)
   {
     if (BUTTON_PRESSED)
@@ -271,13 +325,23 @@ void main()
     }
     if (bUSBReady)
     {
+<<<<<<< HEAD
       if (HID_Read() == 2 && usbFromHost[0] == REPORT_ID_KEYBOARD)   // If a (complete) host LED indication response is available
       {
         leds.byte = usbFromHost[1];   // Remember the most recent LED status change
         CAPSLOCK_LED = leds.bits.CapsLock; // Make the CAPSLOCK light match the CAPSLOCK state
-      }
-      if (!nRemainingTimerTicks)      // If the keepalive timer has popped
+=======
+      if (HID_Read() == 1)   // If a (complete) host LED indication response is available
       {
+        leds.byte = usbFromHost[0];   // Remember the most recent LED status change
+        CAPSLOCK_LED = leds.bits.CapsLock; // Make the CAPSLOCK light match the CAPSLOCK state
+        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL); // User has pressed CAPSLOCK, so check again in a little while
+>>>>>>> randommouse
+      }
+
+      if (nRemainingTimerTicks == 0)  // If the keepalive timer has popped
+      {
+<<<<<<< HEAD
         CAPSLOCK_LED ^= 1;            // Flash LED to indicate a keepalive is being sent
 
         usbToHost[3] = SCROLL_LOCK_KEY; // Scroll Lock is not widely used anymore and so is relatively harmless to inject
@@ -294,6 +358,13 @@ void main()
 
         CAPSLOCK_LED ^= 1;            // Restore the original CAPSLOCK light state
         nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
+=======
+        CAPSLOCK_LED ^= 1;            // Flash LED
+        pressKey(SCROLL_LOCK_KEY);    // Press harmless key (turns on Scroll Lock light on old keyboards)
+        pressKey(SCROLL_LOCK_KEY);    // Press harmless key (to reset Scroll Lock to its original state)
+        CAPSLOCK_LED ^= 1;            // Flash LED
+        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);  // Check again in a little while
+>>>>>>> randommouse
       }
     }
     else
@@ -306,10 +377,13 @@ void main()
 
 void interrupt()               // High priority interrupt service routine
 {
-  USB_Interrupt_Proc();        // Always give the USB module first opportunity to process
-  if (TMR3IF_bit)              // Timer3 interrupt? (22.9 times/second)
+  if (USBIF)
+  {
+    USB_Interrupt_Proc();      // Always give the USB module first opportunity to process (resets USBIF)
+  }
+  if (TMR1IF_bit)              // Timer1 interrupt? (22.9 times/second)
   {
     nRemainingTimerTicks--;    // Decrement delay count
-    TMR3IF_bit = 0;            // Clear the Timer3 interrupt flag
+    TMR1IF_bit = 0;            // Clear the Timer1 interrupt flag
   }
 }
