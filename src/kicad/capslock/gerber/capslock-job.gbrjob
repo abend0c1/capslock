@@ -1,0 +1,33 @@
+G04 Gerber job file with board parameters*
+%TF.FileFunction,JobInfo*%
+%TF.Part,SinglePCB*%
+G04 Single PCB fabrication instructions*
+%TF.GenerationSoftware,KiCad,Pcbnew,no-vcs-found-72d4889~60~ubuntu17.04.1*%
+%TF.CreationDate,2017-10-28T15:15:39+11:00*%
+%TF.ProjectId,capslock,636170736C6F636B2E6B696361645F70,1.00*%
+%MOMM*%
+G04 Overall board parameters*
+%TJ.B.Size.X,25.550*%
+%TJ.B.Size.Y,12.215*%
+%TJ.B.LayerNum,2*%
+%TJ.B.Overall.Thickness,2.400*%
+%TJ.B.Legend.Present,Both*%
+%TJ.B.SolderMask.Present,Both*%
+G04 board design rules*
+%TJ.D.PadToPad.Out,0.200*%
+%TJ.D.PadToTrack.Out,0.200*%
+%TJ.D.TrackToTrack.Out,0.200*%
+%TJ.D.MinLineWidth.Out,0.250*%
+%TJ.D.TrackToRegion.Out,0.200*%
+%TJ.D.RegionToRegion.Out,0.200*%
+G04 Layer Structure*
+%TJ.L."Copper,L1,Top",Positive,capslock-F.Cu.gbr*%
+%TJ.L."Copper,L2,Bot",Positive,capslock-B.Cu.gbr*%
+%TJ.L."SolderPaste,Bot",Positive,capslock-B.Paste.gbr*%
+%TJ.L."SolderPaste,Top",Positive,capslock-F.Paste.gbr*%
+%TJ.L."Legend,Bot",Positive,capslock-B.SilkS.gbr*%
+%TJ.L."Legend,Top",Positive,capslock-F.SilkS.gbr*%
+%TJ.L."SolderMask,Bot",Negative,capslock-B.Mask.gbr*%
+%TJ.L."SolderMask,Top",Negative,capslock-F.Mask.gbr*%
+%TJ.L."Profile",Positive,capslock-Edge.Cuts.gbr*%
+M02*

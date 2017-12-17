@@ -27,11 +27,7 @@
 
 NAME     - CAP! CapsLock Light
 
-<<<<<<< HEAD
-FUNCTION - This is a USB caps-lock-light-on-a-stick that lights up when the
-=======
 FUNCTION - This is a USB capslock-light-on-a-stick that lights up when the
->>>>>>> randommouse
            CapsLock LED would normally be lit. Some Lenovo laptops do not have
            a CapsLock LED.
            
@@ -51,28 +47,19 @@ FUNCTION - This is a USB capslock-light-on-a-stick that lights up when the
            device will also briefly blink for each keystroke injection.
 
 
+           By default, the SCROLL LOCK keystroke
+           is sent to the host every 60 seconds to prevent the host from
+           detecting a "time out" situation.
+
+           The SCROLL LOCK light, present on many older keyboards, will flash
+           to indicate the keystroke injection is active. The LED on this
+           device will also briefly blink for each keystroke injection.
+
+
 FEATURES - 1. Absolutely NO HOST DRIVERS required.
            2. The user can press the button to toggle the sending of "keep
               alive" keystrokes.
 
-<<<<<<< HEAD
-PIN USAGE -                     PIC18F25K50
-                           .------------------.                 .-- IOC
-            MCLR       --> | RE3  1    28 RB7 | <-- PGD         | |
-            LED        <-- | RA0  2    27 RB6 | <-- PGC         | | PORTB
-                       <-- | RA1  3    26 RB5 | <-- BUTTON      | | Weak
-                       <-- | RA2  4    25 RB4 | <--             | | Pullups
-                       <-- | RA3  5    24 RB3 | <--               | Enabled
-                       <-- | RA4  6    23 RB2 | <--               |
-                       <-- | RA5  7    22 RB1 | <--               |
-            Ground     --- | VSS  8    21 RB0 | <--               |
-            n/c        --- | RA7  9    20 VDD | --- +5V
-                       <-- | RA6  10   19 VSS | --- Ground
-                       <-- | RC0  11   18 RC7 | --> RX
-                       <-- | RC1  12   17 RC6 | --> TX
-                       <-- | RC2  13   16 RC5 | <-> USB D+
-            2 x 100 nF --- | VUSB 14   15 RC4 | <-> USB D-
-=======
 PIN USAGE -                     PIC16F1455
                            .------------------.
             Vdd +5V    --- | RE3  1    14 RB7 | --- Vss 0V -------.
@@ -82,7 +69,6 @@ PIN USAGE -                     PIC16F1455
                    n/c --- | RC5  5    10 RC0 | <-- PGD
                    n/c --- | RC4  6     9 RC1 | <-- PGC
                    n/c --- | RC3  7     8 RC2 | --- n/c
->>>>>>> randommouse
                            '------------------'
 
 
@@ -203,25 +189,9 @@ void Prolog()
 
   //        76543210
   TRISA = 0b00000000;     // 1=Input, 0=Output
-<<<<<<< HEAD
-  TRISB = 0b00100000;
-  TRISC = 0b00110000;
-
-  NOT_RBPU_bit = 0;       // Enable PORTB weak pull-ups (PIC 18F25K50)
-
-  OSCCON = 0b01110000;
-//           x              0  = IDLEN: Sleep on SLEEP instruction
-//            xxx           111= IRCF: HFINTOSC (16 MHz)
-//               x          0  = OSTS: Status bit
-//                x         0  = HFIOFS: Status bit
-//                 xx       00 = SCS: Primary clock (determined by FOSC in CONFIG1H)
-  while (!HFIOFS_bit);    // Wait for HFINTOSC to stabilise
-  while (!OSTS_bit);      // Wait until FOSC<3:0> is being used
-=======
   TRISC = 0b00000000;
 
   NOT_WPUEN_bit = 0;      // Enable weak pull-ups <-- Expect pain if this is not enabled
->>>>>>> randommouse
 
 // You can enable the PLL and set the PLL multipler two ways:
 // 1. At compile time - setting configuration fuses: CONFIG2.PLLEN and CONFIG2.PLLMULT
@@ -270,11 +240,7 @@ void Prolog()
 // Let the interrupts begin
 //----------------------------------------------------------------------------
 
-<<<<<<< HEAD
-  TMR3IE_bit = 1;         // Enable Timer3 interrupts (for keepalive)
-=======
   TMR1IE_bit = 1;         // Enable Timer1 interrupts (for keepalive)
->>>>>>> randommouse
   PEIE_bit = 1;           // Enable peripheral interrupts
   GIE_bit = 1;            // Enable global interrupts
 
@@ -282,8 +248,6 @@ void Prolog()
 }
 
 
-<<<<<<< HEAD
-=======
 void pressKey (uint8_t key)
 {
   usbToHost[0] = 0x00;                   // Key modifier usages
@@ -295,18 +259,13 @@ void pressKey (uint8_t key)
 }
 
 
->>>>>>> randommouse
 #define KEEP_ALIVE_INTERVAL 60
 
 void main()
 {
   Prolog();
   nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
-<<<<<<< HEAD
-  TMR3ON_bit = 1;   // Enable keepalive interrupts
-=======
   TMR1ON_bit = bKeepAlive;   // Enable keepalive interrupts
->>>>>>> randommouse
   while (1)
   {
     if (BUTTON_PRESSED)
@@ -325,46 +284,20 @@ void main()
     }
     if (bUSBReady)
     {
-<<<<<<< HEAD
-      if (HID_Read() == 2 && usbFromHost[0] == REPORT_ID_KEYBOARD)   // If a (complete) host LED indication response is available
-      {
-        leds.byte = usbFromHost[1];   // Remember the most recent LED status change
-        CAPSLOCK_LED = leds.bits.CapsLock; // Make the CAPSLOCK light match the CAPSLOCK state
-=======
       if (HID_Read() == 1)   // If a (complete) host LED indication response is available
       {
         leds.byte = usbFromHost[0];   // Remember the most recent LED status change
         CAPSLOCK_LED = leds.bits.CapsLock; // Make the CAPSLOCK light match the CAPSLOCK state
         nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL); // User has pressed CAPSLOCK, so check again in a little while
->>>>>>> randommouse
       }
 
       if (nRemainingTimerTicks == 0)  // If the keepalive timer has popped
       {
-<<<<<<< HEAD
-        CAPSLOCK_LED ^= 1;            // Flash LED to indicate a keepalive is being sent
-
-        usbToHost[3] = SCROLL_LOCK_KEY; // Scroll Lock is not widely used anymore and so is relatively harmless to inject
-        bUSBReady = HID_Write(&usbToHost, 4) != 0; // Send a "SCROLL LOCK key pressed" message to the host
-        usbToHost[3] = 0b00000000;    // No key pressed
-        bUSBReady = HID_Write(&usbToHost, 4) != 0; // Send a "no key pressed" message to the host
-
-        Delay_ms(10);                 // Keep the LED on or off for a detectable amount of time
-
-        usbToHost[3] = SCROLL_LOCK_KEY; // Send SCROLL LOCK again to revert to the original scroll lock state
-        bUSBReady = HID_Write(&usbToHost, 4) != 0;
-        usbToHost[3] = 0b00000000;
-        bUSBReady = HID_Write(&usbToHost, 4) != 0;
-
-        CAPSLOCK_LED ^= 1;            // Restore the original CAPSLOCK light state
-        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
-=======
         CAPSLOCK_LED ^= 1;            // Flash LED
         pressKey(SCROLL_LOCK_KEY);    // Press harmless key (turns on Scroll Lock light on old keyboards)
         pressKey(SCROLL_LOCK_KEY);    // Press harmless key (to reset Scroll Lock to its original state)
         CAPSLOCK_LED ^= 1;            // Flash LED
         nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);  // Check again in a little while
->>>>>>> randommouse
       }
     }
     else

@@ -40,14 +40,7 @@ typedef union
 
 t_ledIndicators leds;
 
-<<<<<<< HEAD
-sbit BUTTON              at RB5_bit;
-#define BUTTON_PRESSED   !BUTTON
-
-#define CAPSLOCK_LED         LATA0_bit
-=======
 #define CAPSLOCK_LED         LATA4_bit
->>>>>>> randommouse
 
 #define SCROLL_LOCK_KEY      0x47
 
