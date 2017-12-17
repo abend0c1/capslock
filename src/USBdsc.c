@@ -91,29 +91,33 @@ const struct
   };
 
 /*
-  Keyboard Input Report (PIC --> Host) 4 bytes as follows:
+  Keyboard Input Report (PIC --> Host) 9 bytes as follows:
     .---------------------------------------.
-    |          REPORT_ID_KEYBOARD           | IN: Report Id
-    |---------------------------------------|
     |RGUI|RALT|RSHF|RCTL|LGUI|LALT|LSHF|LCTL| IN: Ctrl/Shift/Alt/GUI keys on left and right hand side of keyboard
     |---------------------------------------|
     |                (pad)                  | IN: pad (strangely, this pad byte is necessary)
     |---------------------------------------|
     |                 Key                   | IN: Key that is currently pressed
+    |---------------------------------------|
+    |                 Key                   | IN: Key (null)
+    |---------------------------------------|
+    |                 Key                   | IN: Key (null)
+    |---------------------------------------|
+    |                 Key                   | IN: Key (null)
+    |---------------------------------------|
+    |                 Key                   | IN: Key (null)
+    |---------------------------------------|
+    |                 Key                   | IN: Key (null)
     '---------------------------------------'
 
   Output Report (PIC <-- Host) 2 bytes as follows:
 
     .---------------------------------------.
-    |          REPORT_ID_KEYBOARD           | OUT: Report Id
-    |---------------------------------------|
     |    |    |    |    |    |SCRL|CAPL|NUML| OUT: NumLock,CapsLock,ScrollLock - and 5 unused pad bits
     '---------------------------------------'
 
   Mouse Input Report (PIC --> Host) 2 bytes as follows:
     .---------------------------------------.
-    |          REPORT_ID_MOUSE              | IN: Report Id
-    |---------------------------------------|
     |                 X                     | IN: Relative movement along the X-axis
     '---------------------------------------'
 */
@@ -124,7 +128,6 @@ const struct
   0x05, 0x01,                  /* (GLOBAL) USAGE_PAGE         0x0001 Generic Desktop Page */ \
   0x09, 0x06,                  /* (LOCAL)  USAGE              0x00010006 Keyboard (CA=Application Collection) */ \
   0xA1, 0x01,                  /* (MAIN)   COLLECTION         0x01 Application (Usage=0x00010006: Page=Generic Desktop Page, Usage=Keyboard, Type=CA) */ \
-  0x85, REPORT_ID_KEYBOARD,    /*   (GLOBAL) REPORT_ID          0x4B (75) 'K' */ \
   0x05, 0x07,                  /*   (GLOBAL) USAGE_PAGE         0x0007 Keyboard/Keypad Page */ \
   0x19, 0xE0,                  /*   (LOCAL)  USAGE_MINIMUM      0x000700E0 Keyboard Left Control (DV=Dynamic Value) */ \
   0x29, 0xE7,                  /*   (LOCAL)  USAGE_MAXIMUM      0x000700E7 Keyboard Right GUI (DV=Dynamic Value) */ \
@@ -138,7 +141,8 @@ const struct
   0x26, 0xFF, 0x00,            /*   (GLOBAL) LOGICAL_MAXIMUM    0x00FF (255) */ \
   0x19, 0x00,                  /*   (LOCAL)  USAGE_MINIMUM      0x00070000 Keyboard No event indicated (Sel=Selector) <-- Redundant: USAGE_MINIMUM is already 0x0000 */ \
   0x2A, 0xFF, 0x00,            /*   (LOCAL)  USAGE_MAXIMUM      0x000700FF */ \
-  0x81, 0x00,                  /*   (MAIN)   INPUT              0x00000000 (1 field x 8 bits) 0=Data 0=Array 0=Absolute 0=Ignored 0=Ignored 0=PrefState 0=NoNull */ \
+  0x95, 0x06,                  /*   (GLOBAL) REPORT_COUNT       0x06 (1) Number of fields */ \
+  0x81, 0x00,                  /*   (MAIN)   INPUT              0x00000000 (6 fields x 8 bits) 0=Data 0=Array 0=Absolute 0=Ignored 0=Ignored 0=PrefState 0=NoNull */ \
 \
   0x75, 0x01,                  /*   (GLOBAL) REPORT_SIZE        0x01 (1) Number of bits per field */ \
   0x95, 0x03,                  /*   (GLOBAL) REPORT_COUNT       0x03 (3) Number of fields */ \
@@ -151,21 +155,6 @@ const struct
   0x95, 0x01,                  /*   (GLOBAL) REPORT_COUNT       0x01 (1) Number of fields */ \
   0x91, 0x03,                  /*   (MAIN)   OUTPUT             0x00000003 (1 field x 5 bits) 1=Constant 1=Variable 0=Absolute 0=NoWrap 0=Linear 0=PrefState 0=NoNull 0=NonVolatile 0=Bitmap */ \
   0xC0,                        /* (MAIN)   END_COLLECTION     Application */ \
-\
-  0x05, 0x01,                  /* (GLOBAL) USAGE_PAGE         0x0001 Generic Desktop Page */ \
-  0x09, 0x02,                  /* (LOCAL)  USAGE              0x00010002 Mouse (CA=Application Collection) */ \
-  0xA1, 0x01,                  /* (MAIN)   COLLECTION         0x01 Application (Usage=0x00010002: Page=Generic Desktop Page, Usage=Mouse, Type=CA) */ \
-  0x09, 0x01,                  /*   (LOCAL)  USAGE              0x00010001 Pointer (CP=Physical Collection) */ \
-  0xA1, 0x00,                  /*   (MAIN)   COLLECTION         0x00 Physical (Usage=0x00010001: Page=Generic Desktop Page, Usage=Pointer, Type=CP) */ \
-  0x85, REPORT_ID_MOUSE,       /*     (GLOBAL) REPORT_ID          0x4D (77) 'M' */ \
-  0x09, 0x30,                  /*     (LOCAL)  USAGE              0x00010030 X (DV=Dynamic Value) */ \
-  0x15, 0x81,                  /*     (GLOBAL) LOGICAL_MINIMUM    0x81 (-127) */ \
-  0x25, 0x7F,                  /*     (GLOBAL) LOGICAL_MAXIMUM    0x7F (127) */ \
-  0x75, 0x08,                  /*     (GLOBAL) REPORT_SIZE        0x08 (8) Number of bits per field */ \
-  0x95, 0x01,                  /*     (GLOBAL) REPORT_COUNT       0x01 (1) Number of fields */ \
-  0x81, 0x06,                  /*     (MAIN)   INPUT              0x00000006 (1 field x 8 bits) 0=Data 1=Variable 1=Relative 0=NoWrap 0=Linear 0=PrefState 0=NoNull 0=NonVolatile 0=Bitmap */ \
-  0xC0,                        /*   (MAIN)   END_COLLECTION     Physical */ \
-  0xC0,                        /* (MAIN)   END_COLLECTION     Application */
 
 REPORT_DESCRIPTOR(hid_rpt_desc);  // Build the HID report descriptor structure (it MUST be called hid_rpt_desc)
 const uint8_t  USB_HID_RPT_SIZE = sizeof hid_rpt_desc; // This constant MUST be defined
@@ -190,8 +179,8 @@ const uint8_t configDescriptor1[] =
     0,                      // bAlternateSetting - A number that identifies a descriptor with alternate settings for this bInterfaceNumber.
     2,                      // bNumEndpoint - Number of endpoints supported not counting endpoint zero
     0x03,                   // bInterfaceClass - Class code  (0x03 = HID)
-    0,                      // bInterfaceSubclass - Subclass code (0x00 = No Subclass)
-    0,                      // bInterfaceProtocol - Protocol code (0x00 = No protocol)
+    1,                      // bInterfaceSubclass - Subclass code (0x00 = No Subclass)
+    1,                      // bInterfaceProtocol - Protocol code (0x00 = No protocol)
                             // Valid combinations of Class, Subclass, Protocol are as follows:
                             // Class Subclass Protocol Meaning
                             //   3       0       0     Class=HID with no specific Subclass or Protocol:

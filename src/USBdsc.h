@@ -1,6 +1,3 @@
-#define REPORT_ID_KEYBOARD          'K'
-#define REPORT_ID_MOUSE             'M'
-
 #define LO(x) ((uint8_t) (x))
 #define HI(x) ((uint8_t) ((uint16_t)(x)) >> 8)
 #define WORD(x) LO(x), HI(x)
@@ -32,5 +29,3 @@ const struct \
     0x03,              /* bDscType: 0x03 means this is a String descriptor */ \
     {STRING}           /* string:   This is the array of 2-byte "characters" comprising the string */ \
   }
-
-
