@@ -33,11 +33,13 @@
 #define IBM_SK_8845B        0x3019
 #define IBM_SK_8815         0x301B
 
-
 const uint16_t USB_VENDOR_ID  = IBM;
 const uint16_t USB_PRODUCT_ID = IBM_SK_8845B;
 const uint16_t USB_PRODUCT_VERSION = 0x0122; // Increment this (vv.rr) each time your device's firmware changes significantly
-const uint8_t  USB_SELF_POWER = 0x80;        // 0x80 = Bus powered, 0xC0 = Self powered
+const uint8_t  USB_BUS_POWERED = 0x80;       // D7    Reserved, must be set to 1
+const uint8_t  USB_SELF_POWERED = 0xC0;      // D7+D6 Self Powered
+const uint8_t  USB_REMOTE_WAKEUP = 0xA0;     // D7+D5 Remote wakeup (device can wake up host)
+
 const uint8_t  USB_MAX_POWER  = 50;          // Bus power required in units of 2 mA
 const uint8_t  USB_TRANSFER_TYPE = 0x03;     // 0x03 = Interrupt transfers
 const uint8_t  EP_IN_INTERVAL = 5;           // Measured in frame counts i.e. 1 ms units for Low Speed (1.5 Mbps) or Full Speed (12 Mbps), and 125 us units for High Speed (480 Mbps)
@@ -58,8 +60,8 @@ const struct
 {
     uint8_t  bLength;               // bLength         - Descriptor size in bytes (12h)
     uint8_t  bDescriptorType;       // bDescriptorType - The constant DEVICE (01h)
-    uint16_t bcdUSB;                // bcdUSB          - USB specification release number (BCD)
-    uint8_t  bDeviceClass;          // bDeviceClass    - Class Code
+    uint16_t bcdUSB;                // bcdUSB          - USB specification release number (BCD) 0xVVMN (0x0110=USB 1.10)
+    uint8_t  bDeviceClass;          // bDeviceClass    - Class Code (00h=Specified on each interface, FFh=Vendor specified)
     uint8_t  bDeviceSubClass;       // bDeviceSubClass - Subclass code
     uint8_t  bDeviceProtocol;       // bDeviceProtocol - Protocol code
     uint8_t  bMaxPacketSize0;       // bMaxPacketSize0 - Maximum packet size for endpoint 0
@@ -74,7 +76,7 @@ const struct
   {
       18,                           // bLength
       0x01,                         // bDescriptorType
-      0x0110,                       // bcdUSB   (USB 1.1)
+      0x0110,                       // bcdUSB   (USB 1.10)
       0x00,                         // bDeviceClass
       0x00,                         // bDeviceSubClass
       0x00,                         // bDeviceProtocol
@@ -178,7 +180,7 @@ const uint8_t configDescriptor1[] =
     1,                      // bNumInterfaces      - Number of interfaces in the configuration
     1,                      // bConfigurationValue - Identifier for Set Configuration and Get Configuration requests
     STRING_INDEX_CONFIG,    // iConfiguration      - Index of string descriptor for the configuration (0 means no descriptor)
-    USB_SELF_POWER,         // bmAttributes        - Self/bus power and remote wakeup settings
+    USB_BUS_POWERED,        // bmAttributes        - Self/bus power and remote wakeup settings
     USB_MAX_POWER,          // bMaxPower           - Bus power required in units of 2 mA
 
     // Interface Descriptor
@@ -206,7 +208,7 @@ const uint8_t configDescriptor1[] =
     // HID Class-Specific Descriptor
     0x09,                   // bLength - Descriptor size in bytes.
     0x21,                   // bDescriptorType - This descriptor's type: 21h to indicate the HID class.
-    WORD(0x0101),           // bcdHID - HID specification release number (BCD)
+    WORD(0x0110),           // bcdHID - HID specification release number (BCD) 01.10
     0x00,                   // bCountryCode - Numeric expression identifying the country for localized hardware (BCD) or 00h.
     1,                      // bNumDescriptors - Number of subordinate report and physical descriptors.
     0x22,                   // bDescriptorType - The type of a class-specific descriptor that follows
