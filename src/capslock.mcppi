@@ -39,6 +39,7 @@ Count=0
 [SEARCH_PATH]
 Count=3
 Path0=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Defs\
+Path1=C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for PIC\Uses\P16_Enh\
 Path2=E:\projects\capslock\src\
 [HEADER_PATH]
 Count=1

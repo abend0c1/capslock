@@ -268,20 +268,6 @@ void main()
   TMR1ON_bit = bKeepAlive;   // Enable keepalive interrupts
   while (1)
   {
-    if (BUTTON_PRESSED)
-    {
-      Delay_ms(25);                   // Cheap button debounce
-      if (BUTTON_PRESSED)             // If button still pressed after debounce delay
-      {
-        TMR3ON_bit = 0;               // Prevent keystroke injection while the button is pressed
-        CAPSLOCK_LED ^= 1;            // Flash LED to acknowledge button press
-        while (BUTTON_PRESSED);       // Wait until button is released
-        CAPSLOCK_LED ^= 1;            // Restore LED status
-        bKeepAlive ^= 1;              // Toggle injecting "keep alive" keystrokes
-        nRemainingTimerTicks = INTERVAL_IN_SECONDS(KEEP_ALIVE_INTERVAL);
-        TMR3ON_bit = bKeepAlive;
-      }
-    }
     if (bUSBReady)
     {
       if (HID_Read() == 1)   // If a (complete) host LED indication response is available
