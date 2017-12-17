@@ -31,23 +31,7 @@ FUNCTION - This is a USB capslock-light-on-a-stick that lights up when the
            CapsLock LED would normally be lit. Some Lenovo laptops do not have
            a CapsLock LED.
            
-           By default, the SCROLL LOCK keystroke is sent to the host every
-           60 seconds. This behaviour can be toggled by pressing the button
-           on the CapsLock dongle. The SCROLL LOCK light, present on many
-           keyboards, will flash to indicate the keystroke injection is
-           active.
-
-
-           By default, the SCROLL LOCK keystroke
-           is sent to the host every 60 seconds to prevent the host from
-           detecting a "time out" situation.
-
-           The SCROLL LOCK light, present on many older keyboards, will flash
-           to indicate the keystroke injection is active. The LED on this
-           device will also briefly blink for each keystroke injection.
-
-
-           By default, the SCROLL LOCK keystroke
+           In addition, the SCROLL LOCK keystroke
            is sent to the host every 60 seconds to prevent the host from
            detecting a "time out" situation.
 
@@ -57,8 +41,6 @@ FUNCTION - This is a USB capslock-light-on-a-stick that lights up when the
 
 
 FEATURES - 1. Absolutely NO HOST DRIVERS required.
-           2. The user can press the button to toggle the sending of "keep
-              alive" keystrokes.
 
 PIN USAGE -                     PIC16F1455
                            .------------------.
